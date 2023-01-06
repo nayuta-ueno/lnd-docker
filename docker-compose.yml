@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  mylnd:
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+      args:
+        - GID=${GID}
+        - UID=${UID}
+    volumes:
+      - ./lnddata:/data/lnd
+    ports:
+      - "9735:9735"
+      - "10009:10009"
