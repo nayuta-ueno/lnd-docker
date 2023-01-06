@@ -10,3 +10,9 @@ export GID=`id -g`
 export UID
 docker compose -f docker-compose.yml up
 ```
+
+```bash
+export GID=`id -g`
+export UID
+docker compose -f docker-compose2.yml up
+```
