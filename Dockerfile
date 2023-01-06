@@ -1,6 +1,10 @@
 FROM lightninglabs/lnd:v0.15.5-beta
 
-RUN addgroup lnds && adduser -S -G lnds lnds
+ARG GID
+ARG UID
+
+RUN echo GID=${GID}, UID=${UID}
+RUN addgroup -g ${GID} lnds && adduser -S -G lnds -u ${UID} lnds
 # RUN mkdir -p /data/lnd && chmod -R 0777 /data && chown -R lnds.lnds /data
 # COPY "./lnd.conf" /data/lnd/lnd.conf
 # RUN chmod 444 /data/lnd/lnd.conf
