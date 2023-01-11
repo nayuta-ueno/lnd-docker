@@ -1,6 +1,0 @@
-FROM lightninglabs/lnd:v0.15.5-beta
-
-ENTRYPOINT [ "lnd", "--lnddir=/data/lnd" ]
-EXPOSE 9735
-EXPOSE 10009
-VOLUME [/data/lnd]
