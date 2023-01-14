@@ -1,15 +1,47 @@
 version: "3"
 
 services:
-  mylnd:
+  mybitcoind:
+    image: getumbrel/bitcoind:v24.0.1
+    volumes:
+      - bitcoind-data:/data/.bitcoin
+      - ./bitcoindata:/mnt
+    entrypoint: >
+      sh -c '
+        cp /mnt/bitcoin.conf /data/.bitcoin/bitcoin.conf &&
+        bitcoind'
+    networks:
+      - localnet
+    ports:
+      - "8332:8332"
+  mylnd1:
     build:
       context: "./"
-      dockerfile: "Dockerfile"
-      args:
-        - GID=${GID}
-        - UID=${UID}
+      dockerfile: "./lnddata/Dockerfile"
     volumes:
-      - ./lnddata:/data/lnd
+      - lnd-data1:/data/lnd
+      - ./lnddata/lnd.conf:/data/lnd.conf
+      - ./lnddata/data1:/mnt
+    entrypoint: >
+      sh -c '
+        mkdir -p /data/lnd/data/chain/bitcoin/regtest &&
+        cp /mnt/tls.* /data/lnd/ &&
+        cp /mnt/admin.macaroon /mnt/macaroons.db /mnt/wallet.db /data/lnd/data/chain/bitcoin/regtest/ &&
+        lnd --configfile=/data/lnd.conf --lnddir=/data/lnd'
+    user: $USERID:$GROUPID
+    networks:
+      - localnet
     ports:
       - "9735:9735"
       - "10009:10009"
+    depends_on:
+      - mybitcoind
+
+networks:
+  localnet:
+
+volumes:
+  bitcoind-data:
+    driver: local
+  lnd-data1:
+    driver: local
