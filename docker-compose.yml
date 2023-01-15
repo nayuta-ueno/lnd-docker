@@ -36,6 +36,28 @@ services:
       - "10009:10009"
     depends_on:
       - mybitcoind
+  mylnd2:
+    build:
+      context: "./"
+      dockerfile: "./lnddata/Dockerfile"
+    volumes:
+      - lnd-data2:/data/lnd
+      - ./lnddata/lnd.conf:/data/lnd.conf
+      - ./lnddata/data2:/mnt
+    entrypoint: >
+      sh -c '
+        mkdir -p /data/lnd/data/chain/bitcoin/regtest &&
+        cp /mnt/tls.* /data/lnd/ &&
+        cp /mnt/admin.macaroon /mnt/macaroons.db /mnt/wallet.db /data/lnd/data/chain/bitcoin/regtest/ &&
+        lnd --configfile=/data/lnd.conf --lnddir=/data/lnd'
+    user: $USERID:$GROUPID
+    networks:
+      - localnet
+    ports:
+      - "9745:9735"
+      - "10019:10009"
+    depends_on:
+      - mybitcoind
 
 networks:
   localnet:
@@ -44,4 +66,6 @@ volumes:
   bitcoind-data:
     driver: local
   lnd-data1:
+    driver: local
+  lnd-data2:
     driver: local
