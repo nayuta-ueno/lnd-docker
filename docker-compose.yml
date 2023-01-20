@@ -2,14 +2,17 @@ version: "3"
 
 services:
   mybitcoind:
-    image: getumbrel/bitcoind:v24.0.1
+    build:
+      context: "./"
+      dockerfile: "./bitcoindata/Dockerfile"
     volumes:
-      - bitcoind-data:/data/.bitcoin
+      - bitcoind-data:/data/bitcoin
       - ./bitcoindata:/mnt
     entrypoint: >
       sh -c '
-        cp /mnt/bitcoin.conf /data/.bitcoin/bitcoin.conf &&
-        bitcoind'
+        cp /mnt/bitcoin.conf /data/bitcoin/bitcoin.conf &&
+        /bin/bitcoind --datadir=/data/bitcoin'
+    user: $USERID:$GROUPID
     networks:
       - localnet
     ports:
